@@ -62,6 +62,8 @@ const NON_TOURISTIC = [
  * houses with Mikoláš Aleš sgraffiti, birthplaces, buildings that were once a church/fort/castle.
  */
 const TOURISTIC_ANYWAY = /muzeum|expozice|transfer|sgrafit|rodný dům|mrakodrap|kostel|tvrz|(^|[^\p{L}])hrad|věží/u;
+/** Individual monuments (by ÚSKP number) kept even though a NON_TOURISTIC rule matches them, with their map name. */
+const ALWAYS_KEEP = new Map([["100322", "Budova býv. II. české státní reálky, dnes gymnázium"]]);
 const isTouristic = (name, kind, nkp) => {
   const n = name.trim().toLowerCase();
   return nkp || TOURISTIC_ANYWAY.test(`${n} ${kind.toLowerCase()}`) || !NON_TOURISTIC.some((re) => re.test(n));
@@ -100,15 +102,16 @@ for (const layer of LAYERS) {
   for (const f of features) {
     const [lng, lat] = f.geometry.coordinates;
     const p = f.properties;
-    if (!inRegion([lng, lat]) || !isTouristic(p.NazevPrvku, p.NazevPrStavu ?? "", layer.nkp)) continue;
+    if (!inRegion([lng, lat]) || (!ALWAYS_KEEP.has(p.rejstrikoveCisloUSKP) && !isTouristic(p.NazevPrvku, p.NazevPrStavu ?? "", layer.nkp)))
+      continue;
     const id = p.rejstrikoveCisloUSKP;
     const prev = byId.get(id);
     byId.set(id, {
       type: "Feature",
       properties: {
         id,
-        name: p.NazevPrvku,
-        kind: p.NazevPrStavu,
+        name: ALWAYS_KEEP.get(id) ?? p.NazevPrvku,
+        kind: p.NazevPrStavu?.replace(/\s+/g, " "),
         nkp: layer.nkp || prev?.properties.nkp || false,
         category: categoryOf(p.NazevPrvku, p.NazevPrStavu ?? ""),
         municipality: municipalityAt([lng, lat]),
