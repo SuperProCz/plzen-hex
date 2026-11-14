@@ -14,11 +14,12 @@ body {
   position: absolute;
   top: calc(10px + env(safe-area-inset-top, 0px));
   left: 10px;
-  width: min(300px, calc(100vw - 80px));
+  /* Leaves room for the map's zoom/compass controls on the right. */
+  width: min(300px, calc(100vw - 66px));
   max-height: calc(100vh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   overflow-y: auto;
   box-sizing: border-box;
-  padding: 10px 12px;
+  padding: 6px 8px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 8px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
@@ -156,13 +157,6 @@ body {
   font-weight: 600;
 }
 
-.status-panel .home-link {
-  padding: 0;
-  background: none;
-  color: #0b5cad;
-  font-size: 13px;
-  font-weight: 600;
-}
 
 .status-location {
   margin-top: 8px;
@@ -260,17 +254,7 @@ body {
   font-size: 11px;
 }
 
-.panel-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.status-panel .sound-toggle {
-  padding: 2px 4px;
-  background: none;
-  font-size: 15px;
-}
 
 .toast {
   animation: toast-in 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
@@ -1173,4 +1157,126 @@ body {
   margin-top: 6px;
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Map panel: always-visible bar + collapsible details (src/ui/statusPanel.ts) */
+.panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-panel .bar-icon,
+.status-panel .bar-toggle {
+  margin: 0;
+  background: none;
+  color: inherit;
+}
+
+.status-panel .bar-icon {
+  flex: none;
+  padding: 4px 6px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.status-panel .bar-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  text-align: left;
+}
+
+.bar-level {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1a73e8, #0b3d6b);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.bar-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bar-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 700;
+  color: #23302a;
+}
+
+.bar-xp {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: #e3e6ea;
+  overflow: hidden;
+}
+
+.bar-xp > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1a73e8, #6fb7ff);
+}
+
+.gps-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9aa3ad;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.gps-dot[data-state="ok"] {
+  background: #1e9e55;
+}
+.gps-dot[data-state="wait"] {
+  background: #e0a106;
+}
+.gps-dot[data-state="bad"] {
+  background: #c0392b;
+}
+
+.bar-chevron {
+  flex: none;
+  width: 22px;
+  color: #3d4a43;
+  font-size: 18px;
+  line-height: 1;
+  text-align: center;
+}
+
+.panel-details {
+  padding: 4px 4px 4px;
+}
+
+.panel-xp {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b766f;
+}
+
+.status-panel .sound-toggle {
+  display: block;
+  margin-top: 8px;
+  padding: 2px 0;
+  background: none;
+  color: #3d4a43;
+  font-size: 12px;
 }
