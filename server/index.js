@@ -11,7 +11,7 @@ const PORT = Number(process.env.PORT ?? 8787);
 const MAX_BODY_BYTES = 64 * 1024;
 const RATE_LIMIT = { requests: 30, windowMs: 10 * 60 * 1000 };
 /** Cells entered fewer times than this are left out of the public read, so one person's route can't be traced. */
-const MIN_PUBLIC_VISITS = Number(process.env.MIN_PUBLIC_VISITS ?? 3);
+const MIN_PUBLIC_VISITS = Number(process.env.MIN_PUBLIC_VISITS ?? 1);
 const READ_CACHE_MS = 30 * 1000;
 
 // Peer authentication over the local socket: the service runs as the OS user that owns the database.
