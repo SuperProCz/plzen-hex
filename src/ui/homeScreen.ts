@@ -318,9 +318,6 @@ export function createHomeScreen(handlers: HomeHandlers): HomeScreen {
   function footer(): HTMLElement {
     const f = el("footer", "home-footer");
     if (handlers.analytics.available) f.append(analyticsToggle());
-    const dashboard = el("a", "dashboard-link", "📊 Návštěvnost kraje — mapa, kam hráči chodí");
-    dashboard.href = "/dashboard/";
-    f.append(dashboard);
     const reset = el("button", "reset-button", "Smazat postup");
     reset.type = "button";
     let armed: number | undefined;
