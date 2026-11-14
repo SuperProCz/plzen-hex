@@ -1,0 +1,7 @@
+node_modules
+dist
+.DS_Store
+*.apk
+
+# Original raw download (superseded by scripts/fetch-monuments.mjs)
+nkp.geojson

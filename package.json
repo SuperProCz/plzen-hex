@@ -1,0 +1,29 @@
+{
+  "name": "plzen-hex",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:phone": "vite --host --mode phone",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "apk": "npm run build && cap sync android && cd android && JAVA_HOME=\"$(/usr/libexec/java_home -v 21+)\" ./gradlew assembleDebug",
+    "test": "node tests/run.mjs"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.6.9",
+    "h3-js": "^4.5.0",
+    "maplibre-gl": "^5.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.6.9",
+    "@capacitor/cli": "^7.6.9",
+    "@types/geojson": "^7946.0.16",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "esbuild": "^0.28.2",
+    "happy-dom": "^15.11.7",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0"
+  }
+}

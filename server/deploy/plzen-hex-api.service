@@ -1,0 +1,20 @@
+[Unit]
+Description=Plzeň Hex analytics API
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+User=plzenhex
+Group=plzenhex
+WorkingDirectory=/opt/plzen-hex-api
+ExecStart=/usr/bin/node index.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production PORT=8787
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

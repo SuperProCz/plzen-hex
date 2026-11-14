@@ -1,0 +1,1176 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+}
+
+.status-panel {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  left: 10px;
+  width: min(300px, calc(100vw - 80px));
+  max-height: calc(100vh - 40px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.status-bar {
+  height: 6px;
+  margin-top: 6px;
+  background: #e3e6ea;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.status-bar {
+  position: relative;
+}
+
+.status-fill {
+  height: 100%;
+  width: 0;
+  background: #2ecc71;
+  transition: width 0.4s;
+}
+
+.tier-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--tier-color);
+}
+
+/* Tier colours, shared by medals, ticks and the toast. */
+[data-tier="none"] {
+  --tier-color: #c9ced4;
+}
+[data-tier="bronze"] {
+  --tier-color: #c27a3a;
+}
+[data-tier="silver"] {
+  --tier-color: #9aa3ad;
+}
+[data-tier="gold"] {
+  --tier-color: #e2b007;
+}
+[data-tier="milestone"] {
+  --tier-color: #9b59b6;
+}
+[data-tier="level"] {
+  --tier-color: #1a73e8;
+}
+[data-tier="challenge"] {
+  --tier-color: #16a085;
+}
+
+.medal {
+  display: inline-block;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff8 0 20%, transparent 45%), var(--tier-color);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
+  vertical-align: -4px;
+}
+
+.medal[data-tier="none"] {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--tier-color);
+}
+
+.stat-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.stat-row > .medal {
+  margin-top: 1px;
+}
+
+.stat-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-row[data-tier="gold"] .status-fill {
+  background: var(--tier-color);
+}
+
+.stat-next {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #777;
+}
+
+.medal-counts {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.medal-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.medal-count .medal {
+  width: 14px;
+  height: 14px;
+}
+
+.stat-row + .stat-row {
+  margin-top: 8px;
+}
+
+.stat-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stat-count {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.status-progress .stat-label {
+  font-weight: 600;
+}
+
+.status-panel .home-link {
+  padding: 0;
+  background: none;
+  color: #0b5cad;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-location {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+.status-location[data-status="tracking"] {
+  color: #1e9e55;
+}
+
+.status-location[data-status="denied"],
+.status-location[data-status="unavailable"],
+.status-location[data-status="unsupported"] {
+  color: #c0392b;
+}
+
+.status-panel button {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: #0b5cad;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Bottom notification area: badge cards above, unlock toast below (see src/ui/dock.ts). */
+.notification-dock {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  bottom: calc(36px + env(safe-area-inset-bottom, 0px));
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  align-self: center;
+  pointer-events: auto;
+  padding: 10px 16px;
+  background: #1e9e55;
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 13px;
+}
+
+.toast strong {
+  display: block;
+  font-size: 14px;
+}
+
+
+.user-dot {
+  width: 16px;
+  height: 16px;
+  background: #1a73e8;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.3);
+}
+
+.monument-popup {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.monument-popup strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.monument-popup .badge {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #f1c40f;
+  color: #3d2f00;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.monument-popup .muted {
+  color: #777;
+  font-size: 11px;
+}
+
+.panel-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-panel .sound-toggle {
+  padding: 2px 4px;
+  background: none;
+  font-size: 15px;
+}
+
+.toast {
+  animation: toast-in 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(20px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.user-dot.pulse::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 3px solid #2ecc71;
+  animation: dot-pulse 0.9s ease-out;
+  pointer-events: none;
+}
+
+@keyframes dot-pulse {
+  to {
+    transform: scale(5);
+    opacity: 0;
+  }
+}
+
+/* Badge popups */
+
+.badge-stack {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.badge-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 270px;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2b2f36, #1b1e23);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--tier-color), 0 0 24px var(--tier-color), 0 8px 24px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+  cursor: pointer;
+  animation: badge-in 0.55s cubic-bezier(0.2, 1.5, 0.4, 1);
+}
+
+.badge-card.leaving {
+  animation: badge-out 0.35s ease-in forwards;
+}
+
+@keyframes badge-in {
+  from {
+    transform: translateX(120%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes badge-out {
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.badge-medal {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, #fffa 0 18%, transparent 50%), var(--tier-color);
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.18), 0 0 0 3px rgba(255, 255, 255, 0.85);
+  animation: medal-pop 0.7s cubic-bezier(0.2, 1.8, 0.4, 1) 0.15s backwards;
+}
+
+.badge-shine {
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.75) 50%, transparent 60%);
+  animation: medal-shine 1.6s ease-in-out 0.5s 2;
+  transform: translateX(-100%);
+}
+
+@keyframes medal-pop {
+  from {
+    transform: scale(0) rotate(-180deg);
+  }
+}
+
+@keyframes medal-shine {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.badge-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tier-color);
+}
+
+.badge-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.badge-tier {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.confetti {
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 7px;
+  height: 11px;
+  border-radius: 2px;
+  background: hsl(var(--hue) 90% 60%);
+  opacity: 0;
+  animation: confetti 1.1s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+
+.badge-card[data-tier="gold"] .confetti-piece:nth-child(3n) {
+  background: var(--tier-color);
+}
+
+@keyframes confetti {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), calc(var(--dy) + 40px)) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .badge-stack {
+    align-self: stretch;
+    align-items: stretch;
+  }
+
+  .badge-card {
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-card,
+  .badge-card.leaving,
+  .badge-medal,
+  .badge-shine,
+  .toast,
+  .user-dot.pulse::after {
+    animation-duration: 0.01ms;
+  }
+
+  .confetti {
+    display: none;
+  }
+}
+
+/* Home screen */
+
+.home {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow-y: auto;
+  /* Own stacking context so the backdrop's z-index: -1 stays inside the home screen. */
+  isolation: isolate;
+  color: #23302a;
+  transition:
+    opacity 0.35s,
+    transform 0.35s;
+}
+
+.home.leaving {
+  opacity: 0;
+  transform: scale(1.03);
+  pointer-events: none;
+}
+
+/* Fixed backdrop behind the whole home screen; the content scrolls over it. */
+.home-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(#7cc8ef, #cdeefa 55%, #e9f7fb);
+  pointer-events: none;
+}
+
+.home-scene {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: clamp(220px, 50vh, 560px);
+}
+
+.home-title {
+  padding-top: calc(clamp(28px, 7vh, 72px) + env(safe-area-inset-top, 0px));
+  text-align: center;
+}
+
+.home-title h1 {
+  margin: 0;
+  font-size: clamp(34px, 8vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0b3d6b;
+}
+
+.home-title p {
+  margin: 4px 0 0;
+  font-size: 16px;
+  color: #285070;
+}
+
+.scene-sun {
+  position: absolute;
+  top: clamp(24px, 8vh, 80px);
+  right: 10%;
+  width: clamp(56px, 9vw, 110px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ffd34d;
+  box-shadow: 0 0 40px 10px #ffe58a;
+  animation: sun-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes sun-glow {
+  to {
+    transform: scale(1.08);
+    box-shadow: 0 0 60px 18px #ffe58a;
+  }
+}
+
+.scene-cloud {
+  position: absolute;
+  left: 0;
+  fill: #fff;
+  opacity: 0.9;
+  animation: cloud-drift linear infinite;
+}
+
+.cloud-1 {
+  top: 9%;
+  width: clamp(110px, 16vw, 200px);
+  animation-duration: 55s;
+}
+
+.cloud-2 {
+  top: 20%;
+  width: clamp(70px, 10vw, 130px);
+  opacity: 0.75;
+  animation-duration: 75s;
+  animation-delay: -30s;
+}
+
+.cloud-3 {
+  top: 33%;
+  width: clamp(90px, 13vw, 160px);
+  opacity: 0.6;
+  animation-duration: 90s;
+  animation-delay: -60s;
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-220px);
+  }
+  to {
+    transform: translateX(calc(100vw + 20px));
+  }
+}
+
+.hill-far {
+  fill: #a6d49a;
+}
+.hill-mid {
+  fill: #6fb877;
+}
+.hill-near {
+  fill: #3f9a5a;
+}
+
+.scene-tree {
+  fill: #2d6b3e;
+}
+
+.scene-trail {
+  fill: none;
+  stroke: #d8c79a;
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.footprint-shape {
+  fill: #5b4636;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: footstep;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes footstep {
+  0% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+  4% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  55% {
+    opacity: 0.85;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+.home-body {
+  max-width: 720px;
+  margin: 0 auto;
+  /* Generous bottom padding: scrolled to the end, the trail and footprints are in view again. */
+  padding: 0 16px calc(clamp(160px, 35vh, 380px) + env(safe-area-inset-bottom, 0px));
+}
+
+.start-button {
+  display: block;
+  width: min(100%, 360px);
+  margin: clamp(20px, 5vh, 40px) auto 28px;
+  position: relative;
+  padding: 18px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(#f39c34, #e0731b);
+  color: #fff;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow:
+    0 6px 0 #a94f0d,
+    0 12px 24px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  animation: start-bob 2.4s ease-in-out infinite;
+}
+
+.start-button::before {
+  content: "🥾 ";
+}
+
+.start-button:hover {
+  filter: brightness(1.05);
+}
+
+.start-button:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #a94f0d,
+    0 6px 12px rgba(0, 0, 0, 0.2);
+  animation: none;
+}
+
+.start-button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+  animation: none;
+}
+
+@keyframes start-bob {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.home-group h2 {
+  display: inline-block;
+  margin: 28px 0 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3d4a43;
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.achievement-card {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+}
+
+.achievement-card:not([data-tier="none"]) {
+  box-shadow:
+    inset 0 0 0 2px var(--tier-color),
+    0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.achievement-card .medal {
+  width: 26px;
+  height: 26px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-sun,
+  .scene-cloud,
+  .start-button {
+    animation: none;
+  }
+
+  .footprint-shape {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.badge-icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Home screen cards */
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-card {
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.home-card > h2 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3d4a43;
+}
+
+.home-group h2 {
+  margin-top: 14px;
+}
+
+.card-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #6b766f;
+}
+
+.home-error {
+  margin: 0 auto 20px;
+  max-width: 480px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fdecea;
+  color: #8a1f11;
+  text-align: center;
+}
+
+/* Level & XP */
+
+.level-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.level-badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a73e8, #0b3d6b);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.35);
+}
+
+.level-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.level-name strong {
+  font-size: 18px;
+}
+
+.level-name span {
+  font-size: 12px;
+  color: #6b766f;
+}
+
+.xp-bar {
+  height: 8px;
+  margin-top: 10px;
+}
+
+.xp-bar .status-fill {
+  background: linear-gradient(90deg, #1a73e8, #6fb7ff);
+}
+
+.status-panel .level-badge {
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+.status-panel .level-name strong {
+  font-size: 15px;
+}
+
+.player-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 12px;
+}
+
+.player-chips .medal-counts {
+  margin-top: 0;
+}
+
+.chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef3f0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.streak-chip {
+  background: #fff1e0;
+  color: #a94f0d;
+}
+
+.streak-chip.is-empty {
+  background: #eef3f0;
+  color: #6b766f;
+}
+
+.stat-title {
+  font-weight: 700;
+  color: var(--tier-color);
+  filter: brightness(0.8);
+}
+
+/* Daily challenges */
+
+.challenge-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.challenge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.challenge-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #c9ced4;
+  color: #fff;
+  font-weight: 800;
+}
+
+.challenge.is-done .challenge-check {
+  background: #16a085;
+  box-shadow: none;
+}
+
+.challenge-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.challenge.is-done .challenge-text > span:first-child {
+  text-decoration: line-through;
+  color: #6b766f;
+}
+
+.challenge-meta {
+  font-size: 12px;
+  color: #6b766f;
+}
+
+/* Milestones */
+
+.milestone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.milestone {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f4f5f6;
+}
+
+.milestone.is-done {
+  background: #f5eefa;
+  box-shadow: inset 0 0 0 2px #9b59b6;
+}
+
+.milestone-icon {
+  flex: none;
+  font-size: 26px;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.milestone.is-done .milestone-icon {
+  filter: none;
+  opacity: 1;
+}
+
+.milestone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.milestone-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: #7d3c98;
+}
+
+.milestone-go {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border: 1px solid #0b5cad;
+  border-radius: 6px;
+  background: #fff;
+  color: #0b5cad;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Journal */
+
+.journal-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journal-list li {
+  padding: 8px 0;
+  border-top: 1px solid #e6e9eb;
+}
+
+.journal-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.journal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.journal-time {
+  flex: none;
+  font-size: 12px;
+  color: #6b766f;
+}
+
+.journal-found {
+  margin-top: 2px;
+  font-size: 13px;
+  color: #3d4a43;
+}
+
+/* How to play & footer */
+
+.howto-card summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3d4a43;
+}
+
+.howto-card ol {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  line-height: 1.5;
+}
+
+.home-footer {
+  padding: 12px 4px 0;
+  text-align: center;
+  font-size: 12px;
+  color: #3d4a43;
+}
+
+.reset-button {
+  margin-top: 4px;
+  padding: 6px 12px;
+  border: 1px solid #c0392b;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #c0392b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.reset-button.is-armed {
+  background: #c0392b;
+  color: #fff;
+}
+
+/* Map panel extras */
+
+.panel-daily {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #16a085;
+  font-weight: 600;
+}
+
+.status-panel .goal-button {
+  display: block;
+  width: 100%;
+  margin: 8px 0 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #eef5fd;
+  color: #0b3d6b;
+  font-size: 12px;
+  text-align: left;
+}
+
+.popup-state {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b766f;
+}
+
+.popup-state.is-found {
+  color: #1e9e55;
+  font-weight: 600;
+}
+
+.milestone-marker {
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.analytics-toggle {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  max-width: 520px;
+  margin: 0 auto 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.analytics-toggle input {
+  margin-top: 2px;
+  flex: none;
+}
+
+/* Monument photos in popups (src/data/photos.ts) */
+.popup-photo {
+  position: relative;
+  margin: -4px 0 8px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.popup-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #e6e9eb;
+}
+
+.popup-photo.is-locked img {
+  filter: blur(6px) grayscale(1);
+  transform: scale(1.08);
+}
+
+.photo-lock {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.popup-photo figcaption {
+  padding: 4px 0 0;
+  font-size: 10px;
+  line-height: 1.3;
+  color: #6b766f;
+}
+
+.popup-photo figcaption a,
+.popup-wiki {
+  color: #0b5cad;
+}
+
+.popup-wiki {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}

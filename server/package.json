@@ -1,0 +1,14 @@
+{
+  "name": "plzen-hex-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Collects anonymous hexagon entry counts from the Plzeň Hex app.",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "pg": "8.13.1"
+  }
+}
