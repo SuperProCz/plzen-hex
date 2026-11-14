@@ -1,6 +1,6 @@
-import maplibregl, { type StyleSpecification } from "maplibre-gl";
+import maplibregl, { type LngLatBoundsLike, type StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { INITIAL_ZOOM, PLZEN_CENTER, REGION_BOUNDS } from "../config";
+import { INITIAL_ZOOM, MAP_BOUNDS_PADDING_DEG, MIN_ZOOM, PLZEN_CENTER, REGION_BOUNDS } from "../config";
 
 const osmStyle: StyleSpecification = {
   version: 8,
@@ -26,9 +26,12 @@ export function createMap(container: string | HTMLElement, { geolocate = true } 
     style: osmStyle,
     center: PLZEN_CENTER,
     zoom: INITIAL_ZOOM,
-    minZoom: 7.5,
+    minZoom: MIN_ZOOM,
     maxZoom: 18,
-    maxBounds: REGION_BOUNDS,
+    maxBounds: maplibregl.LngLatBounds.convert(REGION_BOUNDS).toArray().map(([lng, lat], i) => {
+      const d = i === 0 ? -MAP_BOUNDS_PADDING_DEG : MAP_BOUNDS_PADDING_DEG;
+      return [lng + d, lat + d];
+    }) as LngLatBoundsLike,
   });
 
   map.addControl(new maplibregl.NavigationControl(), "top-right");

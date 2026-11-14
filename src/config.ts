@@ -9,6 +9,10 @@ export const REGION_BOUNDS: LngLatBoundsLike = [
   [13.95, 50.2],
 ];
 
+/** Temporary: lets the map zoom out further than the region. Set to 0 / 7.5 to restore the old limits. */
+export const MAP_BOUNDS_PADDING_DEG = 1.5;
+export const MIN_ZOOM = 6;
+
 export const INITIAL_ZOOM = 8.50;
 
 export const REGION_BOUNDARY_URL = "/data/plzensky-kraj.geojson";
